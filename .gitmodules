@@ -1,0 +1,6 @@
+[submodule "jsfuck"]
+	path = jsfuck
+	url = https://github.com/aemkei/jsfuck.git
+[submodule "png.js"]
+	path = png.js
+	url = https://github.com/devongovett/png.js.git
