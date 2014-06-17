@@ -2,17 +2,15 @@ var toBrackets = require('./jsfuck/jsfuck.js').JSFuck.encode,
 	fromPng = require('./png.js/png-node.js'),
 	fs = require('fs');
 
-// Encode js
-
+// Encode js:
 var jsfn = process.argv[2],
 	js = fs.readFileSync(jsfn, 'utf8'),
 	encoded = toBrackets(js, true),
 	jsLen = encoded.length;
 
-console.log('js is ' + encoded.length + 'chars');
+console.log('Encoded js is ' + encoded.length + ' chars');
 
-// Read image...
-
+// Read image:
 var imgfn = process.argv[3],
 	img = fromPng.load(imgfn),
 	w = img.width,
@@ -23,11 +21,9 @@ var imgfn = process.argv[3],
 
 console.log(img);
 
-console.log('image is ' + w + '*' + h);
-
-// edit this if you want
-function pixToBinary (p) {
-	return p[0] < 128;
+// Edit this if you want:
+function pixToBinary(p) {
+	return (p[0] + p[1] + p[2]) * p[3] < 97538;
 }
 
 img.decode(function(px) {
@@ -47,19 +43,14 @@ img.decode(function(px) {
 		binary[y][x] = on;
 	}
 
-	console.log('image size: ' + fullArea);
-	console.log('buffer size: ' + binary.length);
-	console.log('black pixels: ' + area);
-	console.log('image is ' + (area * 100 / fullArea) + '% full');
+	console.log('Image is ' + (area * 100 / fullArea) + '% full');
 
-	// Calculate correct size...
-
+	// Calculate correct size:
 	var scale = Math.sqrt(area / jsLen),
 		result = '',
 		pos = 0;
 
 	// Create reformatted file:
-
 	for (var y = 0; y < h; y += scale) {
 		var newY = Math.floor(y);
 		for (var x = 0; x < w; x += scale) {
@@ -72,7 +63,9 @@ img.decode(function(px) {
 	if (pos < encoded.length)
 		result += '\n' + encoded.substr(pos);
 
-	// Save file
-
+	// Save file:
 	fs.writeFileSync(jsfn + '.img.js', result, {encoding: 'utf8'});
+	console.log('Done. File is ' + result.length + ' bytes.');
+	console.log('Size ratio = ' + (result.length * 100 / jsLen) + '%');
+	// Usually these files gzip pretty well so on a good server it's not so bad.
 });
