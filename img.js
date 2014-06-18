@@ -63,9 +63,13 @@ img.decode(function(px) {
 	if (pos < encoded.length)
 		result += '\n' + encoded.substr(pos);
 
+	// Trim trailing whitespace for filesize.
+	result = result.replace(/([^ ]|^) +\n/g, '$1\n');
+
 	// Save file:
 	fs.writeFileSync(jsfn + '.img.js', result, {encoding: 'utf8'});
 	console.log('Done. File is ' + result.length + ' bytes.');
 	console.log('Size ratio = ' + (result.length * 100 / jsLen) + '%');
 	// Usually these files gzip pretty well so on a good server it's not so bad.
 });
+
