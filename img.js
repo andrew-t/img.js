@@ -1,14 +1,21 @@
 var toBrackets = require('./jsfuck/jsfuck.js').JSFuck.encode,
 	fromPng = require('./png.js/png-node.js'),
+	uglify = require('./UglifyJS/uglify-js.js'),
 	fs = require('fs');
 
 // Encode js:
 var jsfn = process.argv[2],
 	js = fs.readFileSync(jsfn, 'utf8'),
-	encoded = toBrackets(js, true),
+	ast = uglify.parser.parse(js);
+ast = uglify.uglify.ast_mangle(ast);
+ast = uglify.uglify.ast_squeeze(ast);
+var minified = uglify.uglify.gen_code(ast),
+	encoded = toBrackets(minified, true),
 	jsLen = encoded.length;
 
-console.log('Encoded js is ' + encoded.length + ' chars');
+console.log('Original js is ' + js.length + ' chars');
+console.log('Minified js is ' + minified.length + ' chars');
+console.log('Encoded js is ' + jsLen + ' chars');
 
 // Read image:
 var imgfn = process.argv[3],
@@ -18,8 +25,6 @@ var imgfn = process.argv[3],
 	fullArea = w * h,
 	area = 0,
 	binary = [];
-
-console.log(img);
 
 // Edit this if you want:
 function pixToBinary(p) {
@@ -68,8 +73,7 @@ img.decode(function(px) {
 
 	// Save file:
 	fs.writeFileSync(jsfn + '.img.js', result, {encoding: 'utf8'});
-	console.log('Done. File is ' + result.length + ' bytes.');
-	console.log('Size ratio = ' + (result.length * 100 / jsLen) + '%');
+	console.log('Image is ' + result.length + ' chars.');
 	// Usually these files gzip pretty well so on a good server it's not so bad.
 });
 

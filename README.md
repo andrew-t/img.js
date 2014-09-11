@@ -11,4 +11,4 @@ Usage:
 
 Eg:
 
-    node img.js example.js logo.png
+    node img.js example.js img/logo.png
